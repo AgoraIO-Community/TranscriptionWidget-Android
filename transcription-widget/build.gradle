@@ -1,0 +1,140 @@
+plugins {
+    id 'com.android.library'
+    id 'maven-publish'
+    id 'signing'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.google.protobuf'
+}
+
+apply from: "${project.rootProject.projectDir}/publishing.gradle"
+
+android {
+    namespace sdkNamespace.toString()
+    compileSdk appCompileSdkVersion.toInteger()
+
+    defaultConfig {
+        minSdk appMinSdkVersion.toInteger()
+        versionName sdkVersion.toString()
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+
+        ndk {
+            abiFilters 'arm64-v8a', 'armeabi-v7a'
+        }
+
+        externalNativeBuild {
+            cmake {
+                arguments '-DANDROID_STL=c++_static'
+                cppFlags "-std=c++1z -fexceptions"
+            }
+        }
+
+        buildConfigField "String", "VERSION_NAME", "\"${sdkVersion.toString()}\""
+    }
+
+    signingConfigs {
+        release {
+            storeFile file('./keystore/testkey.jks')
+            storePassword '123456'
+            keyAlias 'key0'
+            keyPassword '123456'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled isMinifyEnabled.toBoolean()
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            //consumerProguardFiles 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            minifyEnabled isMinifyEnabled.toBoolean()
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            //consumerProguardFiles 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
+
+    android.libraryVariants.configureEach {
+        variant ->
+            variant.outputs.configureEach {
+                if (variant.buildType.name == 'release') {
+                    outputFileName = "${project.rootProject.name}-${defaultConfig.versionName}.aar"
+                }
+            }
+    }
+
+//    externalNativeBuild {
+//        cmake {
+//            path './src/main/cpp/CMakeLists.txt'
+//        }
+//    }
+
+    packagingOptions {
+        exclude 'lib/x86/*.so'
+        exclude 'lib/x86_64/*.so'
+    }
+    ndkVersion appCompileNdkVersion.toString()
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    sourceSets {
+        main {
+            proto {
+                srcDir 'src/main/protobuf'
+            }
+        }
+    }
+}
+
+protobuf {
+    protoc { artifact = "com.google.protobuf:protoc:4.27.1" }
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java {
+                    option 'lite'
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    implementation("io.github.winskyan:Agora-LoggingService:1.0.9")
+
+    implementation("com.google.protobuf:protobuf-java:4.27.1")
+    implementation("com.google.protobuf:protobuf-kotlin:4.27.1")
+
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
+}

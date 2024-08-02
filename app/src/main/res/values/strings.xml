@@ -1,0 +1,18 @@
+<resources>
+    <string name="application_name" translatable="false">TranscriptionWidgetDemo</string>
+    <string name="setting" translatable="false">Setting</string>
+    <string name="join_as_host" translatable="false">Join As Host</string>
+    <string name="join_as_audience" translatable="false">Join As Audience</string>
+    <string name="back" translatable="false">返回</string>
+    <string name="all_transcript" translatable="false">all转写</string>
+    <string name="all_translate" translatable="false">all翻译</string>
+    <string name="copy" translatable="false">拷贝</string>
+    <string name="copied" translatable="false">已拷贝</string>
+    <string name="ok" translatable="false">确定</string>
+    <string name="language" translatable="false">语言</string>
+    <string name="transcript_languages" translatable="false">转写目标语言</string>
+    <string name="translate_languages" translatable="false">翻译目标语言</string>
+    <string name="server_env" translatable="false">SERVER ENV</string>
+    <string name="server_address" translatable="false">地址</string>
+
+</resources>

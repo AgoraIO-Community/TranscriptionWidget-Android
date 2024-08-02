@@ -1,0 +1,86 @@
+[
+  {
+    "name": "zh-CN",
+    "code": "zh-CN"
+  },
+  {
+    "name": "zh-TW",
+    "code": "zh-TW"
+  },
+  {
+    "name": "zh-HK",
+    "code": "zh-HK"
+  },
+  {
+    "name": "en-US",
+    "code": "en-US"
+  },
+  {
+    "name": "en-IN",
+    "code": "en-IN"
+  },
+  {
+    "name": "ja-JP",
+    "code": "ja-JP"
+  },
+  {
+    "name": "hi-IN",
+    "code": "hi-IN"
+  },
+  {
+    "name": "ko-KR",
+    "code": "ko-KR"
+  },
+  {
+    "name": "de-DE",
+    "code": "de-DE"
+  },
+  {
+    "name": "es-ES",
+    "code": "es-ES"
+  },
+  {
+    "name": "fr-FR",
+    "code": "fr-FR"
+  },
+  {
+    "name": "it-IT",
+    "code": "it-IT"
+  },
+  {
+    "name": "pt-PT",
+    "code": "pt-PT"
+  },
+  {
+    "name": "id-ID",
+    "code": "id-ID"
+  },
+  {
+    "name": "ar-JO",
+    "code": "ar-JO"
+  },
+  {
+    "name": "ar-EG",
+    "code": "ar-EG"
+  },
+  {
+    "name": "ar-SA",
+    "code": "ar-SA"
+  },
+  {
+    "name": "ar-AE",
+    "code": "ar-AE"
+  },
+  {
+    "name": "tr-TR",
+    "code": "tr-TR"
+  },
+  {
+    "name": "vi-VN",
+    "code": "vi-VN"
+  },
+  {
+    "name": "th-TH",
+    "code": "th-TH"
+  }
+]

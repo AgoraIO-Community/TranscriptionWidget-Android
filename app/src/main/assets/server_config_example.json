@@ -1,0 +1,10 @@
+[
+  {
+    "name": "test",
+    "serverUrl": "http://1.1.1.1",
+    "testIp": "1.1.1.1",
+    "testPort": 1,
+    "appId": "xxxxxxxxx",
+    "appCert": ""
+  }
+]

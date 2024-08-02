@@ -1,0 +1,135 @@
+afterEvaluate {
+    publishing {
+        repositories {
+            //it.mavenLocal()
+            it.maven {
+                url "${rootDir}/repo"
+            }
+        }
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication) {
+                from components.release
+                groupId = mavenGroupId.toString()
+                artifactId = mavenArtifactId.toString()
+                version = android.defaultConfig.versionName
+
+                pom {
+                    name = mavenArtifactId.toString()
+                    description = mavenPomDescription.toString()
+                    url = 'http://maven.apache.org'
+
+
+                    licenses {
+                        license {
+                            name = 'AGORA SDK License'
+                            url = 'https://github.com/AgoraIO/full-sdk/blob/master/LICENSE'
+                        }
+                    }
+
+
+                    developers {
+                        developer {
+                            id = 'agora'
+                            name = 'agora'
+                            url = 'https://www.shengwang.cn/'
+                        }
+                    }
+
+                    scm {
+                        url = 'https://github.com/winskyan/Agora-Service-SDK.git'
+                    }
+                }
+            }
+        }
+    }
+    signing {
+        sign publishing.publications.release
+    }
+
+    tasks.register('deleteFolders', Delete) {
+        delete("${rootDir}/published")
+        delete("${rootDir}/repo")
+    }
+
+    tasks.register('copyFiles', Copy) {
+        from "${rootDir}/${project.name}/build/outputs/mapping/release/mapping.txt"
+        into "${rootDir}/published"
+        include("*mapping.txt")
+
+        doLast {
+            def mappingFile = file("${rootDir}/published/mapping.txt")
+            def newMappingFile = file("${rootDir}/published/mapping-${sdkVersion.toString()}.txt")
+
+            mappingFile.renameTo(newMappingFile)
+            println "Mapping file copied and renamed: ${newMappingFile}"
+        }
+    }
+
+    tasks.register('zipFolderAndUpload', Zip) {
+        from "${rootDir}/repo" // 要压缩的文件夹路径
+        archiveFileName = "${mavenArtifactId.toString()}-${sdkVersion.toString()}.zip"
+
+        // 排除过滤器
+        exclude { FileTreeElement element ->
+            // 判断是文件夹且名称以指定字符串结尾
+            !element.isDirectory() && element.name.startsWith('maven-metadata')
+        }
+
+        destinationDirectory = file("${rootDir}/published")
+
+
+        doLast {
+            // 上传到maven central repository
+            def location = "https://central.sonatype.com/api/v1/publisher/upload?name=${mavenGroupId.toString()}:${mavenArtifactId.toString()}:${sdkVersion.toString()}&publishingType=USER_MANAGED"
+            def file = new File("${rootDir}/published/${mavenArtifactId.toString()}-${sdkVersion.toString()}.zip")
+
+            def url = new URL(location)
+            def connection = url.openConnection()
+
+            connection.setRequestMethod('POST')
+            connection.setRequestProperty("Content-Type", "multipart/form-data");
+            connection.setRequestProperty("Authorization", "Bearer ${mavenAuthorization.toString()}")
+
+            def fileStream = new FileInputStream(file)
+            def fileBytes = new byte[file.length().toInteger()]
+            fileStream.read(fileBytes)
+            fileStream.close()
+
+            connection.setDoOutput(true)
+            connection.setDoInput(true)
+
+            def outputStream = connection.getOutputStream()
+            def base64File = Base64.getEncoder().encodeToString(fileBytes)
+            def requestBody = "bundle=${base64File}"
+            outputStream.write(requestBody.getBytes())
+            outputStream.flush()
+            outputStream.close()
+
+
+            def inputStream = null
+            if (connection.responseCode == HttpURLConnection.HTTP_CREATED) {
+                println 'File was uploaded!'
+                inputStream = connection.getInputStream()
+            } else {
+                println 'Failed to upload file, response code: ' + connection.responseCode + ', response message: ' + connection.responseMessage
+                inputStream = connection.getErrorStream()
+            }
+
+            def reader = new BufferedReader(new InputStreamReader(inputStream))
+            def response = new StringBuffer()
+            String line
+            while ((line = reader.readLine()) != null) {
+                response.append(line)
+            }
+            reader.close()
+            println response.toString()
+
+            connection.disconnect()
+        }
+    }
+
+    publish.dependsOn(deleteFolders)
+    publish.finalizedBy(copyFiles)
+    publish.finalizedBy(zipFolderAndUpload)
+}
