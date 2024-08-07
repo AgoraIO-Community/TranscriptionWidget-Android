@@ -7,12 +7,12 @@ import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
 import android.widget.FrameLayout
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.agora.transcription_widget.internal.TranscriptSubtitleMachine
 import io.agora.transcription_widget.internal.adapter.SubtitleAdapter
 import io.agora.transcription_widget.internal.model.ListChangeItem
 import io.agora.transcription_widget.internal.utils.LogUtils
+import io.agora.transcription_widget.internal.utils.WrapContentLinearLayoutManager
 import io.agora.transcription_widget.utils.Utils
 
 class TranscriptSubtitleView @JvmOverloads constructor(
@@ -67,7 +67,7 @@ class TranscriptSubtitleView @JvmOverloads constructor(
         LogUtils.enableLog(context, true, true, "")
 
         recyclerView = RecyclerView(context).apply {
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = WrapContentLinearLayoutManager(context)
         }
 
         // 初始化适配器
@@ -157,11 +157,12 @@ class TranscriptSubtitleView @JvmOverloads constructor(
     }
 
     private fun invalidate(item: ListChangeItem) {
+        LogUtils.d("TranscriptSubtitleView invalidate type:${item.type} position:${item.position}")
         if (isDestroyed) {
             LogUtils.i("TranscriptSubtitleView is destroyed, can't invalidate.")
             return
         }
-        if (item.position < 0 || item.position >= adapter.itemCount) {
+        if (item.position < 0 || (item.position != 0 && item.position >= adapter.itemCount)) {
             return
         }
         handler.post {
@@ -186,7 +187,9 @@ class TranscriptSubtitleView @JvmOverloads constructor(
                     LogUtils.i("invalidate type:${item.type} is invalid.")
                 }
             }
-            recyclerView.smoothScrollToPosition(adapter.itemCount - 1)
+            if (adapter.itemCount >= 1) {
+                recyclerView.smoothScrollToPosition(adapter.itemCount - 1)
+            }
 
             //invalidate()  // 重绘整个视图
             //requestLayout()  // 如果尺寸发生变化，请求重新布局
@@ -198,6 +201,7 @@ class TranscriptSubtitleView @JvmOverloads constructor(
 
      */
     fun getAllTranscriptText(): String {
+        LogUtils.d("TranscriptSubtitleView getAllTranscriptText")
         return TranscriptSubtitleMachine.getAllTranscriptText()
     }
 
@@ -206,6 +210,7 @@ class TranscriptSubtitleView @JvmOverloads constructor(
      * @return The current all text of translation.
      */
     fun getAllTranslateText(): String {
+        LogUtils.d("TranscriptSubtitleView getAllTranslateText")
         return TranscriptSubtitleMachine.getAllTranslateText()
     }
 
@@ -214,6 +219,7 @@ class TranscriptSubtitleView @JvmOverloads constructor(
     * Clear all data, and the view will be empty.
      */
     fun clear() {
+        LogUtils.d("TranscriptSubtitleView clear")
         TranscriptSubtitleMachine.clear()
         invalidate(ListChangeItem(0, ListChangeItem.TYPE_UPDATE_ALL))
     }
