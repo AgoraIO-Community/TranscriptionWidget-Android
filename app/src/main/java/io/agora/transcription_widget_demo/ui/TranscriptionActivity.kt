@@ -104,6 +104,10 @@ class TranscriptionActivity : AppCompatActivity(), RtcManager.RtcCallback, RttMa
                     }
                 })
         }
+
+        binding.clearBtn.setOnClickListener {
+            binding.transcriptSubtitleView.clear()
+        }
     }
 
 

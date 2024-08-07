@@ -14,5 +14,6 @@
     <string name="translate_languages" translatable="false">翻译目标语言</string>
     <string name="server_env" translatable="false">SERVER ENV</string>
     <string name="server_address" translatable="false">地址</string>
+    <string name="clear" translatable="false">清空</string>
 
 </resources>
