@@ -79,10 +79,13 @@ object TranscriptSubtitleMachine {
 
             Constants.MESSAGE_DATA_TYPE_TRANSLATE -> {
                 agoraSpeech2TextProtoBuffer.transList.forEach {
-                    val translateText =
+                    var translateText =
                         buildString { it.textsList.forEach { item -> append(item) } }
                     LogUtils.d("handleMessageData transList texts:${translateText} isFinal: ${it.isFinal}  lang:${it.lang}")
 
+                    if (it.lang.startsWith("ar-")) {
+                        translateText = "\u200E$translateText"
+                    }
                     if (null != transcriptionData) {
                         transcriptionData.translateTextList.forEach { existTranslateText ->
                             if (existTranslateText.lang == it.lang) {
