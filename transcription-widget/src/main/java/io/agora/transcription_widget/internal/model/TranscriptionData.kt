@@ -1,7 +1,7 @@
 package io.agora.transcription_widget.internal.model
 
 data class TranscriptionData(
-    val uid: Int,
+    val uid: Long,
     val startTs: Long,
     var endTs: Long,
     var transcriptText: TranscriptText,

@@ -11,9 +11,10 @@ import io.agora.transcription_widget.speech2text.AgoraSpeech2TextProtoBuffer
 object TranscriptSubtitleMachine {
     private val transcriptionDataList = mutableListOf<TranscriptionData>()
 
-    fun handleMessageData(data: ByteArray?, uid: Int): ListChangeItem {
+    fun handleMessageData(data: ByteArray?): ListChangeItem {
         val agoraSpeech2TextProtoBuffer = AgoraSpeech2TextProtoBuffer.Text.parseFrom(data)
-        LogUtils.d("handleMessageData uid: ${agoraSpeech2TextProtoBuffer.uid} type: ${agoraSpeech2TextProtoBuffer.dataType}  textTs: ${agoraSpeech2TextProtoBuffer.textTs}")
+        val uid = agoraSpeech2TextProtoBuffer.uid
+        LogUtils.d("handleMessageData uid: $uid type: ${agoraSpeech2TextProtoBuffer.dataType}  textTs: ${agoraSpeech2TextProtoBuffer.textTs}")
 
         var positionIndex = transcriptionDataList.size - 1
         var transcriptionData: TranscriptionData? = null

@@ -158,7 +158,7 @@ class TranscriptionActivity : AppCompatActivity(), RtcManager.RtcCallback, RttMa
     }
 
     override fun onStreamMessage(uid: Int, streamId: Int, data: ByteArray?) {
-        binding.transcriptSubtitleView.pushMessageData(data, uid)
+        binding.transcriptSubtitleView.pushMessageData(data)
     }
 
 

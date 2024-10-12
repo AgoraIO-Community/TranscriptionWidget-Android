@@ -70,7 +70,7 @@ object RtcManager : IAudioFrameObserver {
 
                 override fun onStreamMessage(uid: Int, streamId: Int, data: ByteArray?) {
                     super.onStreamMessage(uid, streamId, data)
-                    LogUtils.d("onStreamMessage uid:$uid streamId:$streamId data:${data?.size}")
+                    //LogUtils.d("onStreamMessage uid:$uid streamId:$streamId data:${data?.size}")
                     mCallback?.onStreamMessage(uid, streamId, data)
                 }
             }

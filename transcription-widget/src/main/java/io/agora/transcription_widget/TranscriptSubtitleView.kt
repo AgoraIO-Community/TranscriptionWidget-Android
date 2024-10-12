@@ -145,14 +145,13 @@ class TranscriptSubtitleView @JvmOverloads constructor(
     /**
      * Pushes message data received from the STT (Speech-to-Text) server to processing.
      * @param data The raw data packet containing the message, received from RTC data Stream.
-     * @param uid The unique identifier of the user who generated this data, used for attribution and processing purposes.
      */
-    fun pushMessageData(data: ByteArray?, uid: Int) {
+    fun pushMessageData(data: ByteArray?) {
         if (isDestroyed) {
             LogUtils.i("TranscriptSubtitleView is destroyed, can't pushMessageData.")
             return
         }
-        val item = TranscriptSubtitleMachine.handleMessageData(data, uid)
+        val item = TranscriptSubtitleMachine.handleMessageData(data)
         invalidate(item)
     }
 
@@ -191,7 +190,7 @@ class TranscriptSubtitleView @JvmOverloads constructor(
                 recyclerView.smoothScrollToPosition(adapter.itemCount - 1)
             }
 
-            //invalidate()  // 重绘整个视图
+            invalidate()  // 重绘整个视图
             //requestLayout()  // 如果尺寸发生变化，请求重新布局
         }
     }
