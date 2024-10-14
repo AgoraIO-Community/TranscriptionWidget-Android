@@ -13,6 +13,10 @@ object TranscriptSubtitleMachine {
 
     fun handleMessageData(data: ByteArray?): ListChangeItem {
         val agoraSpeech2TextProtoBuffer = AgoraSpeech2TextProtoBuffer.Text.parseFrom(data)
+        if (agoraSpeech2TextProtoBuffer.endOfSegment) {
+            LogUtils.d("handleMessageData endOfSegment and ignore")
+            return ListChangeItem(0, ListChangeItem.TYPE_UNKNOWN)
+        }
         val uid = agoraSpeech2TextProtoBuffer.uid
         LogUtils.d("handleMessageData uid: $uid type: ${agoraSpeech2TextProtoBuffer.dataType}  textTs: ${agoraSpeech2TextProtoBuffer.textTs}")
 
