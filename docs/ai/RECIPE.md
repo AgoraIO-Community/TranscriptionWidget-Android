@@ -1,62 +1,46 @@
-# Android transcription widget
+# Android Transcription Widget
 
 ## Overview
 
 Embed live transcription UI in an Android RTC app so users can follow captions during a call.
 
-Use this recipe when you want a working reference for Android widget, RTC audio, transcription display, captions.
-
 Repository: [AgoraIO-Community/TranscriptionWidget-Android](https://github.com/AgoraIO-Community/TranscriptionWidget-Android)
 
-## Prerequisites
+## Prerequisites and Setup
 
-- An Agora account and project App ID.
-- The platform toolchain required by this repository.
-- A test device, simulator, browser, or runtime that supports the sample's audio/video path.
-- A second RTC client or sample instance for validating remote publish and subscribe behavior.
-
-## Configure
-
-Create or update the project configuration with:
-
-- `AGORA_APP_ID`
-
-For local testing, some Agora projects allow tokenless joins when App Certificate is disabled. For production, generate RTC tokens on a trusted server and renew them before expiration.
-
-For Android, request runtime camera and microphone permissions before joining the channel.
-
-## Run The Sample
-
-Open the project in Android Studio, configure the Agora App ID, grant camera and microphone permissions on the device, then run the sample. Join the same channel from another client to verify local preview, remote video, and audio routing.
+1. Open the repository in Android Studio.
+2. Copy `app/src/main/assets/server_config_example.json` to `app/src/main/assets/server_config.json`. Fill the server URL, test address/port, `appId` and authentication fields for a compatible transcription backend.
+3. Sync and run the app, selecting the configured server and languages.
+4. For library integration, use the `transcription-widget` module or the Maven dependency documented in the README. Feed the widget the RTC stream-message data and UID.
 
 ## What To Check
 
-- The app registers Agora RTC event handlers before joining a channel.
-- Local media preview or local audio state appears after permissions are granted.
-- Remote users are rendered or heard when they publish audio/video.
-- `user-published` or native user-joined callbacks are handled for each media type the sample supports.
-- Leaving the channel stops local capture and releases RTC resources.
+- Confirm interim and final transcript text render correctly.
+- Check translated text, transcript history and the clear action.
+- Stop/restart transcription and ensure messages are not duplicated.
 
-## Production Notes
+## Integration Notes
 
-- Never ship an App Certificate or privileged token generator in a client app.
-- Renew tokens from the SDK expiration callback before the current token expires.
-- Use subscriber/audience roles for users who should not publish media.
-- Keep UID types consistent across clients in the same channel.
-- For browser-based samples, deploy over HTTPS except when testing on `localhost`; for native samples, validate camera, microphone, and audio routing permissions on target devices.
+The widget displays transcription output; it does not provision or start an STT backend on its own. A compatible, reachable service must be configured.
+
+Keep App Certificates, customer secrets and privileged token generation on a trusted backend for production. Use only your own test credentials while configuring historical demos; do not commit them. Preserve the sample's existing dependency versions and lifecycle until a separate migration is tested.
+
+## Source References
+
+- [README.md](../../README.md)
+- [app/src/main/assets/server_config_example.json](../../app/src/main/assets/server_config_example.json)
+- [transcription-widget/build.gradle](../../transcription-widget/build.gradle)
+
+## Validation Status
+
+This recipe was checked against the repository's source and setup documents. The platform build and live service/device flow have not been run as part of this documentation change. Complete the checks above in an environment with the required SDKs, hardware and service access before treating it as a validated deployment.
 
 ## Implementation Prompt
 
 ```text
-You are working in `AgoraIO-Community/TranscriptionWidget-Android`. Add or adapt this sample so a developer can run the android transcription widget end to end with Agora RTC.
+You are working in AgoraIO-Community/TranscriptionWidget-Android. Use docs/ai/RECIPE.md and its linked source files to adapt the Android Transcription Widget reference to this project.
 
-Goals:
-- Preserve the existing sample architecture and README commands.
-- Configure Agora credentials through environment variables or the platform-native configuration already used by the repo.
-- Register RTC event handlers before joining the channel.
-- Join a test channel, publish local media when the sample role allows it, and subscribe to remote users.
-- Clean up RTC resources when leaving the channel or closing the app.
-- Add production notes for token generation, renewal, and audience-only subscriber roles where applicable.
+Start by inspecting the actual sample directory and configuration described above. Resolve its listed missing prerequisites before claiming it is runnable. Preserve the existing architecture and compatible dependency versions. Implement the recipe's feature-specific flow, permissions and resource cleanup. Use a trusted backend for privileged credentials and tokens in production.
 
-Validate by running the project-specific build or launch command from the README and testing with a second client in the same channel.
+Run the repository-specific build or launch flow, then perform each What To Check item. Report the commands run, the observed results and anything blocked by service access, hardware or incomplete sample code. Do not claim live validation from a documentation or catalog build alone.
 ```
